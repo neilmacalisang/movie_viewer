@@ -16,6 +16,7 @@ import com.test.test.movieviewer.api.ApiClient;
 import com.test.test.movieviewer.api.MovieViewerApi;
 import com.test.test.movieviewer.fragments.MovieFragment;
 import com.test.test.movieviewer.fragments.SeatmapFragment;
+import com.test.test.movieviewer.helpers.ProgressDialogUtils;
 import com.test.test.movieviewer.model.MovieResponseModel;
 import com.test.test.movieviewer.model.ScheduleResponseModel;
 import com.test.test.movieviewer.model.SeatmapResponseModel;
@@ -31,7 +32,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     //Data
     MovieResponseModel movieData;
     ScheduleResponseModel scheduleData;
-    SeatmapResponseModel seatMapData;
 
     FrameLayout mFragmentContainer;
     View mViewSeatmap;
@@ -67,6 +67,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private void callMovieJson(final int retryCount) {
         if (retryCount < 3) {
             Call<MovieResponseModel> call = apiService.getMovieJson();
+            ProgressDialogUtils.showDialog("Loading", this);
             call.enqueue(new Callback<MovieResponseModel>() {
                 @Override
                 public void onResponse(Call<MovieResponseModel> call, Response<MovieResponseModel> response) {
@@ -95,7 +96,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 if (response.isSuccessful()) {
                     Log.d("Schedule", new Gson().toJson(response.body()));
                     scheduleData = response.body();
-                    callSeatmapJson(0);
+                    ProgressDialogUtils.dismissDialog();
                 } else {
                     callScheduleJson(retryCount + 1);
                 }
@@ -105,26 +106,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void onFailure(Call<ScheduleResponseModel> call, Throwable t) {
                 callScheduleJson(retryCount + 1);
-            }
-        });
-    }
-
-    private void callSeatmapJson(final int retryCount) {
-        Call<SeatmapResponseModel> call = apiService.getSeatmapJson();
-        call.enqueue(new Callback<SeatmapResponseModel>() {
-            @Override
-            public void onResponse(Call<SeatmapResponseModel> call, Response<SeatmapResponseModel> response) {
-                if(response.isSuccessful()){
-                    Log.d("Seatmap", new Gson().toJson(response.body()));
-                    seatMapData = response.body();
-                } else {
-                    callSeatmapJson(retryCount + 1);
-                }
-            }
-
-            @Override
-            public void onFailure(Call<SeatmapResponseModel> call, Throwable t) {
-                callSeatmapJson( retryCount + 1);
             }
         });
     }
@@ -147,7 +128,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 Bundle arguments = new Bundle();
                 arguments.putString("movieJson",new Gson().toJson(movieData));
                 arguments.putString("scheduleJson",new Gson().toJson(scheduleData));
-                arguments.putString("seatmapJson",new Gson().toJson(seatMapData));
                 fragment.setArguments(arguments);
                 getSupportFragmentManager().beginTransaction().replace(mFragmentContainer.getId(), fragment).addToBackStack("seatmapFragment").commit();
                 mViewSeatmap.setVisibility(View.GONE);
