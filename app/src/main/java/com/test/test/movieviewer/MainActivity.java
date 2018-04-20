@@ -1,17 +1,12 @@
 package com.test.test.movieviewer;
 
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.google.gson.Gson;
-import com.squareup.picasso.Picasso;
 import com.test.test.movieviewer.api.ApiClient;
 import com.test.test.movieviewer.api.MovieViewerApi;
 import com.test.test.movieviewer.fragments.MovieFragment;
@@ -19,7 +14,6 @@ import com.test.test.movieviewer.fragments.SeatmapFragment;
 import com.test.test.movieviewer.helpers.ProgressDialogUtils;
 import com.test.test.movieviewer.model.MovieResponseModel;
 import com.test.test.movieviewer.model.ScheduleResponseModel;
-import com.test.test.movieviewer.model.SeatmapResponseModel;
 
 import retrofit2.Call;
 import retrofit2.Callback;

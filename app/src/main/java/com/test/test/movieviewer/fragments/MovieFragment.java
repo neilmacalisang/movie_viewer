@@ -11,7 +11,6 @@ import android.widget.TextView;
 import com.google.gson.Gson;
 import com.squareup.picasso.Picasso;
 import com.test.test.movieviewer.R;
-import com.test.test.movieviewer.api.MovieViewerApi;
 import com.test.test.movieviewer.model.MovieResponseModel;
 
 import java.text.ParseException;
@@ -21,7 +20,6 @@ import java.util.Date;
 public class MovieFragment extends android.support.v4.app.Fragment {
 
     private View mFragmentView;
-    MovieViewerApi apiService;
     ImageView mLandscapePoster;
     ImageView mPoster;
     TextView mMovieName;
