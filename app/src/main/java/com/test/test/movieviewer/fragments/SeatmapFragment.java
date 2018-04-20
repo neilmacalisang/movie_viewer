@@ -1,7 +1,6 @@
 package com.test.test.movieviewer.fragments;
 
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -96,19 +95,23 @@ public class SeatmapFragment extends android.support.v4.app.Fragment {
         }
         mCinemaSpinnerAdapter.changeCinemaSched(dateParentId);
         mCinemaSpinner.setAdapter(mCinemaSpinnerAdapter);
+        if (mCinemaSpinnerAdapter.getCount() > 0) {
 
-        mCinemaSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                CinemaItemModel cinema = (CinemaItemModel) mCinemaSpinnerAdapter.getItem(position);
-                setupTimeSpinner(cinema.getId());
-            }
+            mCinemaSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    CinemaItemModel cinema = (CinemaItemModel) mCinemaSpinnerAdapter.getItem(position);
+                    setupTimeSpinner(cinema.getId());
+                }
 
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
 
-            }
-        });
+                }
+            });
+        } else {
+            setupTimeSpinner("");
+        }
     }
 
     private void setupTimeSpinner(final String timeId) {
@@ -117,19 +120,25 @@ public class SeatmapFragment extends android.support.v4.app.Fragment {
         }
         mTimeSpinnerAdapter.changeCinemaSched(timeId);
         mTimeSpinner.setAdapter(mTimeSpinnerAdapter);
+        if (mTimeSpinner.getCount() > 0) {
+            mTimeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                    timeDetails = (TimeItemModel) mTimeSpinnerAdapter.getItem(position);
+                    callSeatmapJson(0);
+                }
 
-        mTimeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                timeDetails = (TimeItemModel) mTimeSpinnerAdapter.getItem(position);
-                callSeatmapJson(0);
-            }
+                @Override
+                public void onNothingSelected(AdapterView<?> parent) {
 
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
-            }
-        });
+                }
+            });
+        } else {
+            selectedSeats.clear();
+            LinearLayout seatmapLayout = mFragmentView.findViewById(R.id.zoomable_layout);
+            seatmapLayout.removeAllViews();
+            selectSeats();
+        }
     }
 
     private void callSeatmapJson(final int retryCount) {
@@ -140,7 +149,6 @@ public class SeatmapFragment extends android.support.v4.app.Fragment {
             @Override
             public void onResponse(Call<SeatmapResponseModel> call, Response<SeatmapResponseModel> response) {
                 if(response.isSuccessful()){
-                    Log.d("Seatmap", new Gson().toJson(response.body()));
                     setupSeatmap(response.body());
                 } else {
                     callSeatmapJson(retryCount + 1);
