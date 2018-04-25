@@ -13,7 +13,7 @@ import android.widget.HorizontalScrollView;
 public class ZoomableLayout extends HorizontalScrollView implements ScaleGestureDetector.OnScaleGestureListener {
 
     private ScaleGestureDetector scaleDetector;
-    private boolean MOVED = false;
+    private int MOVED = 0;
     private static final float MIN_ZOOM = 0.6f;
     private static final float MAX_ZOOM = 4.0f;
 
@@ -62,7 +62,7 @@ public class ZoomableLayout extends HorizontalScrollView implements ScaleGesture
     public boolean onInterceptTouchEvent(MotionEvent motionEvent) {
         switch (motionEvent.getAction() & MotionEvent.ACTION_MASK) {
             case MotionEvent.ACTION_DOWN:
-                MOVED = false;
+                MOVED = 0;
                 if (scale >= MIN_ZOOM) {
                     mode = 1;
                     startX = motionEvent.getX() - prevDx;
@@ -70,7 +70,7 @@ public class ZoomableLayout extends HorizontalScrollView implements ScaleGesture
                 }
                 break;
             case MotionEvent.ACTION_MOVE:
-                MOVED = true;
+                MOVED++;
                 if (mode == 1) {
                     dx = motionEvent.getX() - startX;
                     dy = motionEvent.getY() - startY;
@@ -86,7 +86,11 @@ public class ZoomableLayout extends HorizontalScrollView implements ScaleGesture
                 mode = 0;
                 prevDx = dx;
                 prevDy = dy;
-                return MOVED;
+                if (MOVED > 5) {
+                    return true;
+                } else {
+                    return false;
+                }
         }
         scaleDetector.onTouchEvent(motionEvent);
 
