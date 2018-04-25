@@ -112,7 +112,7 @@
                     android:textSize="12dp" />
             </LinearLayout>
 
-            <HorizontalScrollView
+            <com.test.test.movieviewer.ZoomableLayout
                 android:id="@+id/seatmap_layout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -120,15 +120,16 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"
                 android:layout_marginTop="20dp"
-                android:scrollbars="none">
-
+                android:scrollbars="none"
+                android:overScrollMode="never">
                 <LinearLayout
                     android:id="@+id/zoomable_layout"
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
-                    android:orientation="vertical"></LinearLayout>
-            </HorizontalScrollView>
+                    android:orientation="vertical">
+                </LinearLayout>
+            </com.test.test.movieviewer.ZoomableLayout>
 
             <LinearLayout
                 android:id="@+id/selected_layout"

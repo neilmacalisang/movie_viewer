@@ -203,7 +203,7 @@ public class SeatmapFragment extends android.support.v4.app.Fragment {
                         }
                     });
                 } else if (seat.contains("(")) {
-                    seatColor.setBackgroundColor(getActivity().getResources().getColor(android.R.color.white));
+                    seatColor.setBackgroundColor(getActivity().getResources().getColor(android.R.color.transparent));
                 }else {
                     seatColor.setBackgroundColor(getActivity().getResources().getColor(R.color.colorPrimary));
                 }
