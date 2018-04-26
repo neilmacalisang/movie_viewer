@@ -1,5 +1,7 @@
 package com.test.test.movieviewer;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -79,29 +81,50 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                     callMovieJson(retryCount + 1);
                 }
             });
+        } else {
+            showAlertDialog();
         }
     }
 
     private void callScheduleJson(final int retryCount) {
-        Call<ScheduleResponseModel> call = apiService.getScheduleJson();
-        call.enqueue(new Callback<ScheduleResponseModel>() {
-            @Override
-            public void onResponse(Call<ScheduleResponseModel> call, Response<ScheduleResponseModel> response) {
-                if (response.isSuccessful()) {
-                    Log.d("Schedule", new Gson().toJson(response.body()));
-                    scheduleData = response.body();
-                    ProgressDialogUtils.dismissDialog();
-                } else {
-                    callScheduleJson(retryCount + 1);
+        if (retryCount < 3) {
+            Call<ScheduleResponseModel> call = apiService.getScheduleJson();
+            call.enqueue(new Callback<ScheduleResponseModel>() {
+                @Override
+                public void onResponse(Call<ScheduleResponseModel> call, Response<ScheduleResponseModel> response) {
+                    if (response.isSuccessful()) {
+                        Log.d("Schedule", new Gson().toJson(response.body()));
+                        scheduleData = response.body();
+                        ProgressDialogUtils.dismissDialog();
+                    } else {
+                        callScheduleJson(retryCount + 1);
+                    }
+
                 }
 
-            }
+                @Override
+                public void onFailure(Call<ScheduleResponseModel> call, Throwable t) {
+                    callScheduleJson(retryCount + 1);
+                }
+            });
+        } else {
+            showAlertDialog();
+        }
+    }
 
+    public void showAlertDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Error");
+        builder.setMessage("Error retrieving data.");
+        builder.setCancelable(false);
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
-            public void onFailure(Call<ScheduleResponseModel> call, Throwable t) {
-                callScheduleJson(retryCount + 1);
+            public void onClick(DialogInterface dialog, int which) {
+                finish();
             }
         });
+        AlertDialog alert = builder.create();
+        alert.show();
     }
 
     @Override

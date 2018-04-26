@@ -11,6 +11,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.google.gson.Gson;
+import com.test.test.movieviewer.MainActivity;
 import com.test.test.movieviewer.R;
 import com.test.test.movieviewer.adapter.CinemaSpinnerAdapter;
 import com.test.test.movieviewer.adapter.ScheduleSpinnerAdapter;
@@ -142,25 +143,29 @@ public class SeatmapFragment extends android.support.v4.app.Fragment {
     }
 
     private void callSeatmapJson(final int retryCount) {
-        MovieViewerApi apiService = ApiClient.getClient("").create(MovieViewerApi.class);
-        Call<SeatmapResponseModel> call = apiService.getSeatmapJson();
-        ProgressDialogUtils.showDialog("Loading", getActivity());
-        call.enqueue(new Callback<SeatmapResponseModel>() {
-            @Override
-            public void onResponse(Call<SeatmapResponseModel> call, Response<SeatmapResponseModel> response) {
-                if(response.isSuccessful()){
-                    setupSeatmap(response.body());
-                } else {
+        if (retryCount < 3) {
+            MovieViewerApi apiService = ApiClient.getClient("").create(MovieViewerApi.class);
+            Call<SeatmapResponseModel> call = apiService.getSeatmapJson();
+            ProgressDialogUtils.showDialog("Loading", getActivity());
+            call.enqueue(new Callback<SeatmapResponseModel>() {
+                @Override
+                public void onResponse(Call<SeatmapResponseModel> call, Response<SeatmapResponseModel> response) {
+                    if (response.isSuccessful()) {
+                        setupSeatmap(response.body());
+                    } else {
+                        callSeatmapJson(retryCount + 1);
+                    }
+                    ProgressDialogUtils.dismissDialog();
+                }
+
+                @Override
+                public void onFailure(Call<SeatmapResponseModel> call, Throwable t) {
                     callSeatmapJson(retryCount + 1);
                 }
-                ProgressDialogUtils.dismissDialog();
-            }
-
-            @Override
-            public void onFailure(Call<SeatmapResponseModel> call, Throwable t) {
-                callSeatmapJson( retryCount + 1);
-            }
-        });
+            });
+        } else {
+            ((MainActivity)getActivity()).showAlertDialog();
+        }
     }
 
     private void setupSeatmap(SeatmapResponseModel seatmapData){
