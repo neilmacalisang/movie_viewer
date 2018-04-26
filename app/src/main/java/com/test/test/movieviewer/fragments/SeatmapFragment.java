@@ -230,7 +230,7 @@ public class SeatmapFragment extends android.support.v4.app.Fragment {
         TextView price = (TextView) mFragmentView.findViewById(R.id.price_text);
         double amount = Double.parseDouble(timeDetails.getPrice());
         amount = amount * selectedSeats.size();
-        DecimalFormat formatter = new DecimalFormat("PHP #,###.##");
+        DecimalFormat formatter = new DecimalFormat("PHP ##,##0.00");
         price.setText(formatter.format(amount));
     }
 }
